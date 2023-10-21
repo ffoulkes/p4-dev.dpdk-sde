@@ -13,6 +13,8 @@ env:
   # Environment variables
   #---------------------------------------------------------------------
   SDE_PREFIX: p4-dev/dpdk-sde
+  SDE_DEV_ARTIFACT: dpdk-sde-dev
+  SDE_DEV_TARBALL: dpdk-sde-dev-ubuntu-20.04.tar.gz
 
 jobs:
   #---------------------------------------------------------------------
@@ -73,3 +75,10 @@ jobs:
 
       - name: Create dpdk-sde-dev tarball
         run: tar -czf $SDE_DEV_TARBALL $SDE_PREFIX
+
+      - name: Upload dpdk-sde-dev tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.SDE_DEV_ARTIFACT }}
+          path: ${{ env.SDE_DEV_TARBALL }}
+          if-no-files-found: error
