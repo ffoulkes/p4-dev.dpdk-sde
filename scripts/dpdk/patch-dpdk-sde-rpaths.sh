@@ -4,6 +4,9 @@
 # Patches several libraries in the DPDK Target SDE so infrap4d can be run
 # without requiring that LD_LIBRARY_PATH be set.
 #
+# The SDE_INSTALL environment variable specifies the SDE install prefix
+# (the base directory into which the SDE is installed).
+#
 # Note that P4 Control Plane must be built with the RPATH option enabled
 # for this to work.
 #

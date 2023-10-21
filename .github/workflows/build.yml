@@ -63,15 +63,8 @@ jobs:
       - name: Prune SDE
         working-directory: ${{ env.SDE_PREFIX }}
         run: |
-          rm -fr include/gmock
-          rm -fr include/gtest
-          rm -fr include/python3.10
-          rm -f lib/*.a
-          rm -f lib/*.la
-          rm -fr lib/cmake
-          rm -fr lib/python3.10
-          rm -fr share/dpdk/examples
-          rm -fr share/man
+          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
+          ./scripts/dpdk/prune-dpdk-sde.sh
 
       - name: Create dpdk-sde-dev tarball
         run: tar -czf $SDE_DEV_TARBALL $SDE_PREFIX
