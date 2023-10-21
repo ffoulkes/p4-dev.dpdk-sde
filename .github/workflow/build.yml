@@ -1,0 +1,75 @@
+name: "Build DPDK SDE"
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  # If workflow for PR or push is already running, stop it and start a new one.
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  #---------------------------------------------------------------------
+  # Environment variables
+  #---------------------------------------------------------------------
+  SDE_PREFIX: p4-dev/dpdk-sde
+
+jobs:
+  #---------------------------------------------------------------------
+  # build_dpdk_sde
+  #---------------------------------------------------------------------
+  build_dpdk_sde:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Check out own repository
+        uses: actions/checkout@v3
+
+      - name: Check out p4lang/p4-dpdk-target
+        uses: actions/checkout@v3
+        with:
+          repository: p4lang/p4-dpdk-target
+          submodules: recursive
+          path: dpdk-target
+
+      - name: Install build dependencies
+        working-directory: dpdk-target/tools/setup
+        run: |
+          sudo apt update -y
+          # We might be able to pare this down, based on the manifest of
+          # the Ubuntu runner and the fact that we're building the SDE,
+          # not running it.
+          python install_dep.py
+
+      - name: Build p4-dpdk-target
+        working-directory: dpdk-target
+        run: |
+          export SDE=$(realpath .)
+          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
+          mkdir -pv $SDE_INSTALL
+          ./autogen.sh
+          ./configure --prefix=$SDE_INSTALL
+          make -j6
+          make install
+
+      - name: Patch SDE
+        run: |
+          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
+          ./scripts/dpdk/set-dpdk-sde-target.sh
+          ./scripts/dpdk/patch-dpdk-sde-rpaths.sh
+
+      - name: Prune SDE
+        working-directory: ${{ env.SDE_PREFIX }}
+        run: |
+          rm -fr include/gmock
+          rm -fr include/gtest
+          rm -fr include/python3.10
+          rm -f lib/*.a
+          rm -f lib/*.la
+          rm -fr lib/cmake
+          rm -fr lib/python3.10
+          rm -fr share/dpdk/examples
+          rm -fr share/man
+
+      - name: Create dpdk-sde-dev tarball
+        run: tar -czf $SDE_DEV_TARBALL $SDE_PREFIX
