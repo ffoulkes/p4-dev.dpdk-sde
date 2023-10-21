@@ -61,7 +61,6 @@ jobs:
           ./scripts/dpdk/patch-dpdk-sde-rpaths.sh
 
       - name: Prune SDE
-        working-directory: ${{ env.SDE_PREFIX }}
         run: |
           export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
           ./scripts/dpdk/prune-dpdk-sde.sh
