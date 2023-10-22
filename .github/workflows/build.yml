@@ -47,7 +47,7 @@ jobs:
       - name: Build p4-dpdk-target
         working-directory: dpdk-target
         run: |
-          sudo mkdir -pv --mode=go:w $SDE_DIR
+          sudo mkdir -pv --mode=go+w $SDE_DIR
           ./autogen.sh
           ./configure --prefix=$SDE_DIR
           make -j6
