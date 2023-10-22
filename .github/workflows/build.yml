@@ -12,7 +12,6 @@ env:
   #---------------------------------------------------------------------
   # Environment variables
   #---------------------------------------------------------------------
-  SDE_RUNNER: ubuntu-20.04
   SDE_INSTALL_DIR: /opt/p4dev/dpdk-sde
   SDE_DEV_ARTIFACT: dpdk-sde-dev
   SDE_DEV_TARBALL: dpdk-sde-dev-ubuntu-20.04.tar.gz
@@ -22,7 +21,7 @@ jobs:
   # build_dpdk_sde
   #---------------------------------------------------------------------
   build_dpdk_sde:
-    runs-on: ${{ env.SDE_RUNNER }}
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v3
