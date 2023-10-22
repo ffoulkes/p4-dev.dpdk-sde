@@ -46,11 +46,9 @@ jobs:
       - name: Build p4-dpdk-target
         working-directory: dpdk-target
         run: |
-          export SDE=$(realpath .)
-          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
-          mkdir -pv $SDE_INSTALL
+          mkdir -pv $SDE_PREFIX
           ./autogen.sh
-          ./configure --prefix=$SDE_INSTALL
+          ./configure --prefix=$SDE_PREFIX
           make -j6
           make install
 
@@ -59,11 +57,6 @@ jobs:
           export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
           ./scripts/dpdk/set-dpdk-sde-target.sh
           ./scripts/dpdk/patch-dpdk-sde-rpaths.sh
-
-      - name: Prune SDE
-        run: |
-          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
-          ./scripts/dpdk/prune-dpdk-sde.sh
 
       - name: Create dpdk-sde-dev tarball
         run: tar -czf $SDE_DEV_TARBALL $SDE_PREFIX
