@@ -12,6 +12,7 @@ env:
   #---------------------------------------------------------------------
   # Environment variables
   #---------------------------------------------------------------------
+  SDE_DIR: /opt/p4dev/dpdk-sde
   SDE_PREFIX: p4-dev/dpdk-sde
   SDE_DEV_ARTIFACT: dpdk-sde-dev
   SDE_DEV_TARBALL: dpdk-sde-dev-ubuntu-20.04.tar.gz
@@ -46,20 +47,20 @@ jobs:
       - name: Build p4-dpdk-target
         working-directory: dpdk-target
         run: |
-          mkdir -pv $SDE_PREFIX
+          sudo mkdir -pv --mode=go:w $SDE_DIR
           ./autogen.sh
-          ./configure --prefix=$SDE_PREFIX
+          ./configure --prefix=$SDE_DIR
           make -j6
           make install
 
       - name: Patch SDE
         run: |
-          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
+          export SDE_INSTALL=$SDE_DIR
           ./scripts/dpdk/set-dpdk-sde-target.sh
           ./scripts/dpdk/patch-dpdk-sde-rpaths.sh
 
       - name: Create dpdk-sde-dev tarball
-        run: tar -czf $SDE_DEV_TARBALL $SDE_PREFIX
+        run: tar -czf $SDE_DEV_TARBALL $SDE_DIR
 
       - name: Upload dpdk-sde-dev tarball
         uses: actions/upload-artifact@v3
