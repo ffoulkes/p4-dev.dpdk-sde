@@ -4,8 +4,8 @@
 # Creates a share/TARGET file that identifies this as an ES2K SDE.
 # This allows Bazel (or any other tool) to determine the SDE type.
 #
-# The SDE_INSTALL environment variable specifies the SDE install prefix
-# (the base directory into which the SDE is installed).
+# The SDE_INSTALL environment variable specifies the path to the directory
+# in which the SDE is installed.
 #
 
 # Abort on error.
