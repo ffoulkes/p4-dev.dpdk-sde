@@ -12,7 +12,7 @@ env:
   #---------------------------------------------------------------------
   # Environment variables
   #---------------------------------------------------------------------
-  SDE_PREFIX: p4-dev/dpdk-sde
+  SDE_INSTALL_DIR: /opt/p4dev/dpdk-sde
   SDE_DEV_ARTIFACT: dpdk-sde-dev
   SDE_DEV_TARBALL: dpdk-sde-dev-ubuntu-20.04.tar.gz
 
@@ -24,8 +24,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Check out own repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Check out p4lang/p4-dpdk-target
         uses: actions/checkout@v3
@@ -39,34 +38,32 @@ jobs:
         run: |
           sudo apt update -y
           # We might be able to pare this down, based on the manifest of
-          # the Ubuntu runner and the fact that we're building the SDE,
+          # the Ubuntu runner, and on the fact that we're building the SDE,
           # not running it.
           python install_dep.py
 
       - name: Build p4-dpdk-target
         working-directory: dpdk-target
         run: |
-          export SDE=$(realpath .)
-          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
-          mkdir -pv $SDE_INSTALL
+          sudo mkdir -pv --mode=go+w $SDE_INSTALL_DIR
           ./autogen.sh
-          ./configure --prefix=$SDE_INSTALL
+          ./configure --prefix=$SDE_INSTALL_DIR
           make -j6
           make install
 
       - name: Patch SDE
         run: |
-          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
+          export SDE_INSTALL=$SDE_INSTALL_DIR
           ./scripts/dpdk/set-dpdk-sde-target.sh
           ./scripts/dpdk/patch-dpdk-sde-rpaths.sh
 
       - name: Prune SDE
         run: |
-          export SDE_INSTALL=$GITHUB_WORKSPACE/$SDE_PREFIX
+          export SDE_INSTALL=$SDE_INSTALL_DIR
           ./scripts/dpdk/prune-dpdk-sde.sh
 
       - name: Create dpdk-sde-dev tarball
-        run: tar -czf $SDE_DEV_TARBALL $SDE_PREFIX
+        run: tar -czf $SDE_DEV_TARBALL $SDE_INSTALL_DIR
 
       - name: Upload dpdk-sde-dev tarball
         uses: actions/upload-artifact@v3

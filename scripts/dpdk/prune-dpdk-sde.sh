@@ -1,11 +1,11 @@
 # Copyright 2023 Intel Corporation
 # SPDX-License-Identifier: Apache 2.0
 #
-# Removes stuff from the DPDK SDE that we don't need in order to
-# build against the SDE.
+# Removes stuff from the DPDK SDE that isn't needed when the SDE is being
+# used in a build workflow.
 #
-# The SDE_INSTALL environment variable specifies the SDE install prefix
-# (the base directory into which the SDE is installed).
+# The SDE_INSTALL environment variable specifies the path to the directory
+# in which the SDE is installed.
 #
 
 # Abort on error.
