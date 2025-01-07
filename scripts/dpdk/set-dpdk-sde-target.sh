@@ -1,7 +1,7 @@
 # Copyright 2022-2023 Intel Corporation
 # SPDX-License-Identifier: Apache 2.0
 #
-# Creates a share/TARGET file that identifies this as an ES2K SDE.
+# Creates a share/TARGET file that identifies this as a DPDK SDE.
 # This allows Bazel (or any other tool) to determine the SDE type.
 #
 # The SDE_INSTALL environment variable specifies the path to the directory
